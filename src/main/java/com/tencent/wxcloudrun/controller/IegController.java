@@ -142,6 +142,7 @@ public class IegController {
             saveIegEntity.getQueryList()
     );
     iegUserMapper.saveIegUser(iegUserDO);
+    USER_EMAIL_MAP.put(iegUserDO.getUserName(), iegUserDO);
     return "保存用户信息成功\n" + iegUserDO.print();
   }
 
