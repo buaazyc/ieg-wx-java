@@ -116,7 +116,7 @@ public class IegController {
 
   private String saveIegUser(WxRequest req) {
     // 必须是管理员
-    if (!Objects.equals(req.getFromUserName(), "oBY566s96Ou1Yn16HdbxCfh_wW5c") && !Objects.equals(req.getFromUserName(), "oOizA7VK4kxtxDAbzDSwHE6M6DTs")) {
+    if (!Objects.equals(req.getFromUserName(), "oOizA7Q_VouFHoyphLoaS4rCYtJI") && !Objects.equals(req.getFromUserName(), "oOizA7VK4kxtxDAbzDSwHE6M6DTs")) {
       return "";
     }
     log.info("is admin");
