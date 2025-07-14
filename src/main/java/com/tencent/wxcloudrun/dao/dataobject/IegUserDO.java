@@ -11,7 +11,17 @@ import java.io.Serializable;
 @Data
 public class IegUserDO implements Serializable {
 
+  private String gender;
+
   private String userName;
 
   private String email;
+
+  private String wxId;
+
+  private String bookList;
+
+  private String queryList;
+
+  private String docName;
 }
