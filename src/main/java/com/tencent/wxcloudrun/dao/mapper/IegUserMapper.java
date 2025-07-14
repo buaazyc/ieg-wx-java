@@ -6,4 +6,9 @@ import java.util.List;
 
 public interface IegUserMapper {
     List<IegUserDO> getIegUserList();
+
+    /**
+     * 保存用户信息，如果用户不存在，则新增，如果用户存在，则更新
+     */
+    void saveIegUser(IegUserDO iegUserDO);
 }

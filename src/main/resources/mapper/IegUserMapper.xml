@@ -13,6 +13,16 @@
         <result property="docName" column="doc_name"/>
     </resultMap>
 
+    <insert id="saveIegUser">
+        INSERT INTO t_ieg_user (gender, user_name, email, book_list, query_list)
+        VALUES (#{gender}, #{userName}, #{email}, #{bookList}, #{queryList})
+        ON DUPLICATE KEY UPDATE
+        gender = #{gender},
+        email = #{email},
+        book_list = #{bookList},
+        query_list = #{queryList}
+    </insert>
+
     <!-- 查询用户列表 -->
     <select id="getIegUserList" resultMap="IegUserResultMap">
         SELECT * FROM t_ieg_user
