@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tencent.wxcloudrun.dao.mapper.AccessMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="AccessMapper" type="com.tencent.wxcloudrun.dao.dataobject.AccessDO">
+        <id property="msgId" column="msg_id"/>
+        <result property="msgType" column="msg_type"/>
+        <result property="fromUserName" column="from_user_name"/>
+        <result property="toUserName" column="to_user_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="req" column="req"/>
+        <result property="rsp" column="rsp"/>
+        <result property="accessType" column="access_type"/>
+        <result property="accessKey" column="access_key"/>
+    </resultMap>
+
+    <!-- 插入访问记录 -->
+    <insert id="insertAccess" parameterType="com.tencent.wxcloudrun.dao.dataobject.AccessDO">INSERT INTO
+        t_access_record ( msg_id, msg_type, from_user_name, to_user_name, create_time, req,
+        rsp, access_type, access_key ) VALUES ( #{msgId}, #{msgType}, #{fromUserName}, #{toUserName}, #{createTime},
+        #{req}, #{rsp}, #{accessType}, #{accessKey} )
+    </insert>
+
+    <!-- 获取所有rsp不为空的req集合 -->
+    <select id="getCityList" resultType="String">
+        SELECT access_key
+        FROM t_access_record
+        WHERE length(rsp) > 0
+        and from_user_name != "oBY566s96Ou1Yn16HdbxCfh_wW5c"
+        AND length(access_key) > 0
+        GROUP BY access_key
+        ORDER BY count(*) DESC, MAX(create_time) DESC
+        LIMIT 50
+    </select>
+
+    <!--    CREATE TABLE `t_access_record` (-->
+    <!--    `msg_id` varchar(128) NOT NULL DEFAULT '',-->
+    <!--    `msg_type` varchar(16) NOT NULL DEFAULT '',-->
+    <!--    `from_user_name` varchar(32) NOT NULL DEFAULT '',-->
+    <!--    `to_user_name` varchar(32) NOT NULL DEFAULT '',-->
+    <!--    `create_time` varchar(16) NOT NULL DEFAULT '',-->
+    <!--    `req` text NOT NULL,-->
+    <!--    `rsp` text NOT NULL,-->
+    <!--    `access_type` varchar(32) NOT NULL DEFAULT '',-->
+    <!--    `access_key` varchar(32) NOT NULL DEFAULT '',-->
+    <!--    PRIMARY KEY (`msg_id`)-->
+    <!--    ) ENGINE=InnoDB DEFAULT CHARSET=utf8-->
+</mapper>
