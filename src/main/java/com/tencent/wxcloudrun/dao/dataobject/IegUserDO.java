@@ -36,4 +36,8 @@ public class IegUserDO implements Serializable {
   public String print() {
     return "笔名：" + userName + "\n性别：" + gender + "\n邮箱：" + email + "\n书单：" + bookList + "\n问题：" + queryList;
   }
+
+  public String printBox() {
+    return "笔名：" + userName  + "\n书单：" + bookList + "\n问题：" + queryList;
+  }
 }

@@ -1,5 +1,7 @@
 package com.tencent.wxcloudrun.controller;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.tencent.wxcloudrun.client.email.EmailService;
 import com.tencent.wxcloudrun.dao.dataobject.IegUserDO;
 import com.tencent.wxcloudrun.dao.mapper.IegUserMapper;
@@ -8,10 +10,14 @@ import com.tencent.wxcloudrun.domain.entity.SaveIegEntity;
 import com.tencent.wxcloudrun.provider.WxRequest;
 import com.tencent.wxcloudrun.provider.WxResponse;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -33,6 +39,14 @@ public class IegController {
 
   private final IegUserMapper iegUserMapper;
 
+  /** 缓存1month */
+  private final Cache<String, String> cache =
+          Caffeine.newBuilder().expireAfterWrite(30, TimeUnit.DAYS).build();
+
+  /** 用户到邮箱的映射 */
+  private static final Map<String, IegUserDO> USER_EMAIL_MAP =
+          new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+
   /** 初始化 */
   @PostConstruct
   public void runOnceOnStartup() {
@@ -43,10 +57,6 @@ public class IegController {
         });
     log.info("USER_EMAIL_MAP = {}", USER_EMAIL_MAP);
   }
-
-  /** 用户到邮箱的映射 */
-  private static final Map<String, IegUserDO> USER_EMAIL_MAP =
-      new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
   @PostMapping("/index")
   public WxResponse index(@RequestHeader Map<String, String> headers, @RequestBody WxRequest req) {
@@ -60,8 +70,15 @@ public class IegController {
     rsp.setCreateTime(req.getCreateTime());
     log.info("get req={}", req);
 
-    // 添加用户
+    // 特殊命令：添加用户
     String res = saveIegUser(req);
+    if (!res.isEmpty()) {
+      rsp.setContent(res);
+      return rsp;
+    }
+
+    // 特殊命令：盲盒获取
+    res = getOne(req);
     if (!res.isEmpty()) {
       rsp.setContent(res);
       return rsp;
@@ -115,17 +132,14 @@ public class IegController {
   }
 
   private String saveIegUser(WxRequest req) {
-    // 必须是管理员
-    if (!Objects.equals(req.getFromUserName(), "oOizA7Q_VouFHoyphLoaS4rCYtJI") && !Objects.equals(req.getFromUserName(), "oOizA7VK4kxtxDAbzDSwHE6M6DTs")) {
-      return "";
-    }
-    log.info("is admin");
-
     // 前缀是“保存用户信息\n”
     if (!req.getContent().startsWith("保存用户信息")) {
       return "";
     }
-    log.info("is saveIegUser");
+    // 必须是管理员
+    if (!Objects.equals(req.getFromUserName(), "oOizA7Q_VouFHoyphLoaS4rCYtJI") && !Objects.equals(req.getFromUserName(), "oOizA7VK4kxtxDAbzDSwHE6M6DTs")) {
+      return "";
+    }
 
     // 解析出请求体
     SaveIegEntity saveIegEntity = new SaveIegEntity(req.getContent());
@@ -156,5 +170,37 @@ public class IegController {
         + "123@qq.com\n"
         + "《三体》\n"
         + "你喜欢《三体》吗？";
+  }
+
+  private String getOne(WxRequest req) {
+    if (!req.getContent().equals("七夕男") && !req.getContent().equals("七夕女")) {
+      return "";
+    }
+
+    // 频控逻辑
+    String cacheKey = req.getFromUserName() + "-" + java.time.LocalDate.now();
+    if (cache.getIfPresent(cacheKey) != null) {
+      return "您今天已经参与过了，请明天再来！先好好看一下TA的书和问题吧";
+    }
+    cache.put(cacheKey, "true");
+
+    IegUserDO target = null;
+    List<IegUserDO> userList = new ArrayList<>(USER_EMAIL_MAP.values());
+    Collections.shuffle(userList);
+    for(IegUserDO iegUserDO : userList) {
+      if (iegUserDO.getEmail().isEmpty()) {
+        continue;
+      }
+      if (iegUserDO.getBookList().isEmpty() && iegUserDO.getQueryList().isEmpty()) {
+        continue;
+      }
+      if (iegUserDO.getGender().equals("独立男生") && req.getContent().equals("七夕男")
+      || iegUserDO.getGender().equals("独立女生") && req.getContent().equals("七夕女")) {
+        target = iegUserDO;
+        log.info("target = {}", target);
+        break;
+      }
+    }
+    return target != null ? target.printBox() : "";
   }
 }
