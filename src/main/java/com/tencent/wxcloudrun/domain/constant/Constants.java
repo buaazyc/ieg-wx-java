@@ -1,21 +1,20 @@
 package com.tencent.wxcloudrun.domain.constant;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author zhangyichuan
  * @date 2025/5/21
  */
 public class Constants {
-  public static final String TEST = "test";
 
-  public static final String ENV = "ENV";
-
-  public static final Long WX_MSG_TIME_OUT = 5000L;
-
-  public static final String NO_CITY_FROM_MSG = "无法识别";
-
-  public static final String TRUE = "true";
-
-  public static final String FALSE = "false";
-
-  public static final String RUN_ONCE_ON_STARTUP = "runOnceOnStartup";
+  public static boolean isAdmin(String fromUserName) {
+    Map<String, String> adminList = new HashMap<>();
+    adminList.put("oOizA7cJJZDwqLBZ4a77gwhphe6I", "文杰");
+    adminList.put("oOizA7Q_VouFHoyphLoaS4rCYtJI", "艺川");
+    adminList.put("oOizA7VK4kxtxDAbzDSwHE6M6DTs", "妙咔");
+    adminList.put("oOizA7fJCLfSRHhoEfx9y945zVj8", "林满");
+    return adminList.containsKey(fromUserName);
+  }
 }
