@@ -33,11 +33,11 @@ public class SendEmailManager {
         IegUserDO iegUserDO = userMap.get(iegEntity.getReceiver());
         if (iegUserDO == null) {
             log.error("getReceiver not in map : {}", iegEntity.getReceiver());
-            return "收件人不存在，请确保笔名和格式正确。\n" + helper();
+            return "收件人【" + iegEntity.getReceiver() + "】不存在，请确保笔名和格式正确。\n" + helper();
         }
         if (iegUserDO.getEmail().isEmpty()) {
             log.error("getReceiver email is empty : {}", iegEntity.getReceiver());
-            return "收件人对应邮箱未填写，请告知管理员。";
+            return "收件人【" + iegEntity.getReceiver() + "】未填写邮箱地址";
         }
         log.info("iegUserDO = {}", iegUserDO);
 
@@ -46,7 +46,7 @@ public class SendEmailManager {
             emailService.sendEmailForIeg(iegUserDO.getEmail(), iegEntity.getContent());
         } catch (Exception e) {
             log.error("sendEmailForIeg error", e);
-            return "邮件发送失败，请重试。多次失败时，请在微信活动群中联系管理员。";
+            return "邮件发送失败，请尝试重试。多次失败时，请在微信活动群中联系管理员。";
         }
 
         // 回复消息发送成功
@@ -56,11 +56,12 @@ public class SendEmailManager {
 
     private String helper() {
         return "输入格式为：收件人笔名，留言内容。\n"
-                + "例如：张三，你书单中的《三体》我也很喜欢。\n"
+                + "例如：文杰，你书单中的《三体》我也很喜欢。\n"
                 + "注意：\n"
                 + "1. 收件人笔名确保与公布的笔名完全一致；\n"
-                + "2. 请使用“中文逗号”分隔笔名和留言；\n"
+                + "2. 请使用【中文逗号】分隔笔名和留言；\n"
                 + "3. 内容请使用纯文本，不要包含表情；\n"
-                + "4. 邮件发送人为协会统一邮箱；\n";
+                + "4. 邮件发送人为协会统一邮箱；\n"
+                + "5. 若非特意在留言中说明，收件人不知道发件人是谁。";
     }
 }
