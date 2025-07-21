@@ -40,4 +40,21 @@ public class Constants {
             + "《三体》\n"
             + "你喜欢《三体》吗？";
   }
+
+  public static String saveIegActHelper() {
+    return "输入格式为：保存活动信息 + 书名 + 开始日期 + 结束日期。\n"
+            + "注意注意：每一个元素使用换行分隔\n"
+            + "例如："
+            + "保存活动信息\n"
+            + "《城堡》\n"
+            + "20250721\n"
+            + "20250805";
+  }
+
+  public static String clockInHelper() {
+    return "输入格式为：打卡 + 笔名 + 思考。\n"
+            + "注意注意：每一个元素使用【中文逗号】分隔\n"
+            + "例如："
+            + "打卡，张三，我喜欢《三体》";
+  }
 }

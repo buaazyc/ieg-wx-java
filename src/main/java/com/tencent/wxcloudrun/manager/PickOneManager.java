@@ -1,4 +1,4 @@
-package com.tencent.wxcloudrun.controller;
+package com.tencent.wxcloudrun.manager;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;

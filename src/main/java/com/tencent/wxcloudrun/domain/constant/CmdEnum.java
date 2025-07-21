@@ -12,8 +12,15 @@ import lombok.extern.slf4j.Slf4j;
 public enum CmdEnum {
     /** 保存用户信息 */
     SAVE_USER_INFO("保存用户信息", "保存用户信息"),
+
     /** 七夕 */
     PICK_ONE("七夕", "七夕"),
+
+    /** 保存活动 */
+    SAVE_ACT("保存活动信息", "保存活动信息"),
+
+    /** 打卡 */
+    CLOCK("打卡", "打卡"),
 
     /** 默认 */
     DEFAULT("", "发送邮件"),

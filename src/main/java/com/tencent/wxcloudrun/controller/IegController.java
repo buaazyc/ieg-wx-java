@@ -5,6 +5,9 @@ import com.tencent.wxcloudrun.dao.mapper.IegUserMapper;
 import com.tencent.wxcloudrun.domain.constant.CmdEnum;
 import com.tencent.wxcloudrun.domain.constant.Constants;
 import com.tencent.wxcloudrun.domain.entity.SaveIegEntity;
+import com.tencent.wxcloudrun.manager.PickOneManager;
+import com.tencent.wxcloudrun.manager.ReadBookActManager;
+import com.tencent.wxcloudrun.manager.SendEmailManager;
 import com.tencent.wxcloudrun.provider.WxRequest;
 import com.tencent.wxcloudrun.provider.WxResponse;
 
@@ -33,6 +36,8 @@ public class IegController {
 
   private final PickOneManager pickOneManager;
 
+  private final ReadBookActManager readBookActManager;
+
   /** 用户到邮箱的映射 */
   private static final Map<String, IegUserDO> USER_EMAIL_MAP =
           new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -46,6 +51,7 @@ public class IegController {
           USER_EMAIL_MAP.put(iegUserDO.getUserName(), iegUserDO);
         });
     log.info("USER_EMAIL_MAP = {}", USER_EMAIL_MAP);
+    readBookActManager.update();
   }
 
   @PostMapping("/index")
@@ -70,6 +76,12 @@ public class IegController {
       case SAVE_USER_INFO:
         res = saveIegUser(req);
         break;
+      case SAVE_ACT:
+          res = readBookActManager.saveReadBookAct(req);
+          break;
+      case CLOCK:
+          res = readBookActManager.clockIn(req);
+          break;
       case DEFAULT:
       default:
         res = sendEmailManager.sendEmail(req, USER_EMAIL_MAP);

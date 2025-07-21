@@ -1,4 +1,4 @@
-package com.tencent.wxcloudrun.controller;
+package com.tencent.wxcloudrun.manager;
 
 import com.tencent.wxcloudrun.client.email.EmailService;
 import com.tencent.wxcloudrun.dao.dataobject.IegUserDO;

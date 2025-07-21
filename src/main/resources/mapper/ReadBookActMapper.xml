@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tencent.wxcloudrun.dao.mapper.ReadBookActMapper">
+    <insert id="saveReadBookAct">
+        INSERT INTO t_read_book_act (begin_date, end_date, book_name) VALUES (#{beginDate}, #{endDate}, #{bookName})
+        ON DUPLICATE KEY UPDATE end_date = #{endDate}, begin_date = #{beginDate}
+    </insert>
+
+    <select id="getCurReadBookAct" resultType="com.tencent.wxcloudrun.dao.dataobject.ReadBookActDO">
+        SELECT * FROM t_read_book_act WHERE begin_date &lt;= #{date} AND end_date >= #{date} LIMIT 1
+    </select>
+
+    <select id="getReadBookActList" resultType="com.tencent.wxcloudrun.dao.dataobject.ReadBookActDO">
+        SELECT * FROM t_read_book_act;
+    </select>
+</mapper>
