@@ -2,6 +2,7 @@ package com.tencent.wxcloudrun.controller;
 
 import com.tencent.wxcloudrun.client.email.EmailService;
 import com.tencent.wxcloudrun.dao.dataobject.IegUserDO;
+import com.tencent.wxcloudrun.domain.constant.Constants;
 import com.tencent.wxcloudrun.domain.entity.IegEntity;
 import com.tencent.wxcloudrun.provider.WxRequest;
 import lombok.RequiredArgsConstructor;
@@ -26,14 +27,14 @@ public class SendEmailManager {
         IegEntity iegEntity = new IegEntity(req.getContent());
         if (!iegEntity.isOk()) {
             log.error("parse err: {}", req.getContent());
-            return "格式错误，请注意使用中文逗号分隔笔名和留言。\n" + helper();
+            return "格式错误，请注意使用中文逗号分隔笔名和留言。\n" + Constants.sendMailHelper();
         }
         log.info("parse success iegEntity = {}", iegEntity);
 
         IegUserDO iegUserDO = userMap.get(iegEntity.getReceiver());
         if (iegUserDO == null) {
             log.error("getReceiver not in map : {}", iegEntity.getReceiver());
-            return "收件人【" + iegEntity.getReceiver() + "】不存在，请确保笔名和格式正确。\n" + helper();
+      return "收件人【" + iegEntity.getReceiver() + "】不存在，请确保笔名和格式正确。\n" + Constants.sendMailHelper();
         }
         if (iegUserDO.getEmail().isEmpty()) {
             log.error("getReceiver email is empty : {}", iegEntity.getReceiver());
@@ -52,16 +53,5 @@ public class SendEmailManager {
         // 回复消息发送成功
         log.info("send success = {}", iegEntity);
         return "已成功将留言发送给【" + iegEntity.getReceiver() + "】的邮箱";
-    }
-
-    private String helper() {
-        return "输入格式为：收件人笔名，留言内容。\n"
-                + "例如：文杰，你书单中的《三体》我也很喜欢。\n"
-                + "注意：\n"
-                + "1. 收件人笔名确保与公布的笔名完全一致；\n"
-                + "2. 请使用【中文逗号】分隔笔名和留言；\n"
-                + "3. 内容请使用纯文本，不要包含表情；\n"
-                + "4. 邮件发送人为协会统一邮箱；\n"
-                + "5. 若非特意在留言中说明，收件人不知道发件人是谁。";
     }
 }

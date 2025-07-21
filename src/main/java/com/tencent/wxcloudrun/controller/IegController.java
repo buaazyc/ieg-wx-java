@@ -3,6 +3,8 @@ package com.tencent.wxcloudrun.controller;
 import com.tencent.wxcloudrun.dao.dataobject.IegUserDO;
 import com.tencent.wxcloudrun.dao.mapper.IegUserMapper;
 import com.tencent.wxcloudrun.domain.constant.CmdEnum;
+import com.tencent.wxcloudrun.domain.constant.Constants;
+import com.tencent.wxcloudrun.domain.entity.SaveIegEntity;
 import com.tencent.wxcloudrun.provider.WxRequest;
 import com.tencent.wxcloudrun.provider.WxResponse;
 
@@ -28,8 +30,6 @@ public class IegController {
   private final IegUserMapper iegUserMapper;
 
   private final SendEmailManager sendEmailManager;
-
-  private final UserInfoManager userInfoManager;
 
   private final PickOneManager pickOneManager;
 
@@ -68,7 +68,7 @@ public class IegController {
         res = pickOneManager.getOne(req, USER_EMAIL_MAP);
         break;
       case SAVE_USER_INFO:
-        res = userInfoManager.saveIegUser(req, USER_EMAIL_MAP);
+        res = saveIegUser(req);
         break;
       case DEFAULT:
       default:
@@ -77,5 +77,30 @@ public class IegController {
     }
     rsp.setContent(res);
     return rsp;
+  }
+
+  public String saveIegUser(WxRequest req) {
+    // 必须是管理员
+    if (!Constants.isAdmin(req.getFromUserName())) {
+      return "非管理员无法使用该功能";
+    }
+
+    // 解析出请求体
+    SaveIegEntity saveIegEntity = new SaveIegEntity(req.getContent());
+    log.info("saveIegEntity = {}", saveIegEntity);
+    if (!saveIegEntity.isOk()) {
+      return "格式错误" + Constants.saveIegUserHelper();
+    }
+
+    IegUserDO iegUserDO = new IegUserDO(
+            saveIegEntity.getUserName(),
+            saveIegEntity.getGender(),
+            saveIegEntity.getEmail(),
+            saveIegEntity.getBookList(),
+            saveIegEntity.getQueryList()
+    );
+    iegUserMapper.saveIegUser(iegUserDO);
+    USER_EMAIL_MAP.put(iegUserDO.getUserName(), iegUserDO);
+    return "保存用户信息成功\n" + iegUserDO.print();
   }
 }
