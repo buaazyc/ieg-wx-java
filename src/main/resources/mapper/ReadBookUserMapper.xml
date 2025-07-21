@@ -8,10 +8,11 @@
         <result property="wxId" column="wx_id"/>
         <result property="bookName" column="book_name"/>
         <result property="thinking" column="thinking"/>
+        <result property="date" column="date"/>
     </resultMap>
 
     <insert id="insertReadBookUser">
-        INSERT INTO t_read_book_user (user_name, wx_id, book_name, thinking) VALUES (#{userName}, #{wxId}, #{bookName}, #{thinking})
+        INSERT INTO t_read_book_user (user_name, wx_id, book_name, thinking, date) VALUES (#{userName}, #{wxId}, #{bookName}, #{thinking}, #{date})
     </insert>
     <select id="getReadBookUser" resultMap="ReadBookUserMapper">
         SELECT * FROM t_read_book_user WHERE book_name = #{bookName}

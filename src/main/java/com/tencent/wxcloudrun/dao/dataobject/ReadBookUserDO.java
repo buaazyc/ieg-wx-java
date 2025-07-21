@@ -20,10 +20,13 @@ public class ReadBookUserDO implements Serializable {
 
     private String thinking;
 
-    public ReadBookUserDO(String userName, String wxId, String bookName, String thinking) {
+    private String date;
+
+    public ReadBookUserDO(String userName, String wxId, String bookName, String thinking, String date) {
         this.userName = userName;
         this.wxId = wxId;
         this.bookName = bookName;
         this.thinking = thinking;
+        this.date = date;
     }
 }

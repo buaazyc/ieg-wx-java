@@ -67,14 +67,31 @@ public class ReadBookActManager {
             return "当前没有活动";
         }
 
-        // 当前笔名校验，req的fromUserName+笔名的关联关系，需要和db中如果已经存在的关联关系保持一致
+        // 校验
+        for (ReadBookUserDO readBookUserDO : USER_LIST) {
+            // 同一个微信号，笔名需要相同
+            if (readBookUserDO.getWxId().equals(req.getFromUserName()) && !readBookUserDO.getUserName().equals(clockEntity.getUserName())) {
+                return "你的微信号已经绑定了笔名【"+ readBookUserDO.getUserName() + "】\n请使用之前的笔名打卡";
+            }
+            // 同一个笔名，不能被不同的微信号使用
+            if (!readBookUserDO.getWxId().equals(req.getFromUserName()) && readBookUserDO.getUserName().equals(clockEntity.getUserName())) {
+                return "笔名【"+ readBookUserDO.getUserName() + "】已经被其他书友使用，请更换笔名";
+            }
+            // 如果笔名相同，书名相同，且日期相同，则返回错误
+            if (readBookUserDO.getUserName().equals(clockEntity.getUserName()) &&
+                    readBookUserDO.getBookName().equals(CUR_READ_BOOK_ACT_DO.getBookName())
+                    && readBookUserDO.getDate().equals(TimeUtil.getNowDate())) {
+                return "你今天已经打过卡了，请明天再来吧";
+            }
+        }
 
         // 更新db，并更新缓存
         readBookUserMapper.insertReadBookUser(new ReadBookUserDO(
                 clockEntity.getUserName(),
                 req.getFromUserName(),
                 CUR_READ_BOOK_ACT_DO.getBookName(),
-                clockEntity.getThinking()
+                clockEntity.getThinking(),
+                TimeUtil.getNowDate()
         ));
         update();
 
@@ -91,7 +108,7 @@ public class ReadBookActManager {
         if (thinking == null) {
             return "当前没有用户对" + CUR_READ_BOOK_ACT_DO.getBookName() + "有想法";
         }
-        return "笔名："+thinking.getUserName() + "\n" + thinking.getThinking();
+        return "笔名："+thinking.getUserName() + "\n\n" + thinking.getThinking();
     }
 
     public void update() {
