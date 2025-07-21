@@ -84,6 +84,9 @@ public class ReadBookActManager {
                 return "你今天已经打过卡了，请明天再来吧";
             }
         }
+        if (clockEntity.getThinking().length() < 15) {
+            return "你的想法太短了，请写点长一点";
+        }
 
         // 更新db，并更新缓存
         readBookUserMapper.insertReadBookUser(new ReadBookUserDO(
