@@ -16,6 +16,8 @@ import java.util.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -28,6 +30,7 @@ import javax.annotation.PostConstruct;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/api/ieg")
+@EnableScheduling
 public class IegController {
 
   private final IegUserMapper iegUserMapper;
@@ -45,11 +48,16 @@ public class IegController {
   /** 初始化 */
   @PostConstruct
   public void runOnceOnStartup() {
+    update();
+  }
+
+  @Scheduled(cron = "0 */10 * * * ?")
+  private void update() {
     List<IegUserDO> iegUserList = iegUserMapper.getIegUserList();
     iegUserList.forEach(
-        iegUserDO -> {
-          USER_EMAIL_MAP.put(iegUserDO.getUserName(), iegUserDO);
-        });
+            iegUserDO -> {
+              USER_EMAIL_MAP.put(iegUserDO.getUserName(), iegUserDO);
+            });
     log.info("USER_EMAIL_MAP = {}", USER_EMAIL_MAP);
     readBookActManager.update();
   }
