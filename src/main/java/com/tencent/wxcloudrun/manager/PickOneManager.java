@@ -52,7 +52,10 @@ public class PickOneManager {
                 break;
             }
         }
-        return target != null ? target.printBox() : "";
+        if (target == null) {
+            return "未找到匹配的用户";
+        }
+        return target.printBox();
     }
 
     private boolean isEqual(IegUserDO iegUserDO, String content) {

@@ -111,7 +111,13 @@ public class ReadBookActManager {
         if (thinking == null) {
             return "当前没有用户对" + CUR_READ_BOOK_ACT_DO.getBookName() + "有想法";
         }
-        return "笔名："+thinking.getUserName() + "\n\n" + thinking.getThinking();
+        return clockEntity.getUserName() + "，你已成功打卡活动：" + CUR_READ_BOOK_ACT_DO.getBookName() + "\n" +
+                "累计打卡" + stat(clockEntity.getUserName()) + "天\n" +
+                "\n" +
+                "其他书友：" + "\n" +
+                "笔名：" + thinking.getUserName() + "\n" +
+                "累计打卡：" + stat(thinking.getUserName()) + "天\n" +
+                "TA的想法：" + thinking.getThinking() + "\n";
     }
 
     public void update() {
@@ -125,7 +131,18 @@ public class ReadBookActManager {
         // 查询当前活动的用户想法
         List<ReadBookUserDO> readBookUserList = readBookUserMapper.getReadBookUser(CUR_READ_BOOK_ACT_DO.getBookName());
         // 更新当前活动的用户想法
+        USER_LIST.clear();
         USER_LIST.addAll(readBookUserList);
         log.info("USER_LIST = {}", USER_LIST);
+    }
+
+    public Integer stat(String userName) {
+        Integer count = 0;
+        for (ReadBookUserDO readBookUserDO : USER_LIST) {
+            if (readBookUserDO.getUserName().equals(userName)) {
+                count++;
+            }
+        }
+        return count;
     }
 }

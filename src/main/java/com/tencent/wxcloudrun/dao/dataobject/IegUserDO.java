@@ -1,5 +1,6 @@
 package com.tencent.wxcloudrun.dao.dataobject;
 
+import com.tencent.wxcloudrun.domain.constant.Constants;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -38,6 +39,8 @@ public class IegUserDO implements Serializable {
   }
 
   public String printBox() {
-    return "笔名：" + userName  + "\n性别：" + gender + "\n书单：" + bookList + "\n问题：" + queryList + "\n\n快来给TA留言吧！";
+    return "笔名：" + userName  + "\n性别：" + gender + "\n书单：" + bookList + "\n问题：" + queryList +
+            "\n\n快来给TA留言吧！\n"
+            + Constants.sendMailHelper();
   }
 }

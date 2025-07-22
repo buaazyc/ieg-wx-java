@@ -95,6 +95,7 @@ public class IegController {
         res = sendEmailManager.sendEmail(req, USER_EMAIL_MAP);
         break;
     }
+    log.info("res = {}", res);
     rsp.setContent(res);
     return rsp;
   }
