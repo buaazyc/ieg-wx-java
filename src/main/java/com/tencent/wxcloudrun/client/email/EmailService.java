@@ -4,6 +4,8 @@ import java.util.Properties;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+
+import com.tencent.wxcloudrun.domain.constant.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +27,7 @@ public class EmailService {
     message.setFrom(new InternetAddress(nick + " <" + FROM + ">"));
     message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
     message.setSubject("IEG读书协会-七夕活动，您有新的留言！");
-    message.setText(content + "\n\n----\n邮件为IEG读书协会邮箱统一发送\n请勿直接回复该邮箱。");
+    message.setText(content + "\n\n\n----------------------------\n邮件为IEG读书协会邮箱统一发送，请勿直接回复该邮箱，请移步公众号留言回复：\n"+ Constants.sendMailHelper());
     Transport.send(message);
   }
 
