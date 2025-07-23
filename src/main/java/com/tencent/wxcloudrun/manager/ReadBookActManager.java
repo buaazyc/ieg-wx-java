@@ -72,6 +72,9 @@ public class ReadBookActManager {
         }
 
         UserDO userDO = userManager.getUserByWxOpenId(req.getFromUserName());
+        if (userDO == null) {
+            return "你的微信未注册笔名，请先注册\n"+ Constants.registerHelper();
+        }
 
         // 校验
         for (ReadBookUserDO readBookUserDO : USER_LIST) {
