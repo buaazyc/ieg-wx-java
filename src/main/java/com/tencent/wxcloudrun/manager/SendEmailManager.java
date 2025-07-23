@@ -34,7 +34,8 @@ public class SendEmailManager {
         IegUserDO iegUserDO = userMap.get(iegEntity.getReceiver());
         if (iegUserDO == null) {
             log.error("getReceiver not in map : {}", iegEntity.getReceiver());
-      return "收件人【" + iegEntity.getReceiver() + "】不存在，请确保笔名和格式正确。\n" + Constants.sendMailHelper();
+        return "收件人【" + iegEntity.getReceiver() + "】不存在，请确保笔名和格式正确。\n" + Constants.sendMailHelper();
+
         }
         if (iegUserDO.getEmail().isEmpty()) {
             log.error("getReceiver email is empty : {}", iegEntity.getReceiver());

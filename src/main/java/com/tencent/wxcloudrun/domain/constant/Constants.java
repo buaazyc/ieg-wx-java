@@ -52,9 +52,16 @@ public class Constants {
   }
 
   public static String clockInHelper() {
-    return "输入格式为：打卡，{笔名}，{思考}。\n"
+    return "输入格式为：打卡，{思考内容}。\n"
             + "注意注意：使用【中文逗号】分隔\n"
             + "例如："
-            + "打卡，张三，我非常喜欢《三体》";
+            + "打卡，我非常喜欢《三体》，尤其喜欢罗辑这个角色。";
+  }
+
+  public static String registerHelper() {
+    return "输入格式为：注册，{笔名}\n"
+            + "注意注意：使用【中文逗号】分隔\n"
+            + "例如："
+            + "注册，张三";
   }
 }

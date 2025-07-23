@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tencent.wxcloudrun.dao.mapper.UserMapper">
+    <insert id="insertUser">
+        insert into t_user(wx_open_id, pen_name) values (#{wxOpenId}, #{penName})
+        on duplicate key update pen_name = #{penName}
+    </insert>
+    <select id="getUserList" resultType="com.tencent.wxcloudrun.dao.dataobject.UserDO">
+        SELECT * FROM t_user;
+    </select>
+</mapper>

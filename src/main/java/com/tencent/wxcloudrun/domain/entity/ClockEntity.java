@@ -9,8 +9,6 @@ import lombok.Data;
  */
 @Data
 public class ClockEntity {
-    private String userName;
-
     private String thinking;
 
     private boolean ok;
@@ -20,13 +18,12 @@ public class ClockEntity {
             ok = false;
             return;
         }
-        String[] parts = content.split("，", 3);
-        if (parts.length != 3 || !parts[0].equals(CmdEnum.CLOCK.getCmd())) {
+        String[] parts = content.split("，", 2);
+        if (parts.length != 2 || !parts[0].equals(CmdEnum.CLOCK.getCmd())) {
             ok = false;
             return;
         }
-        userName = parts[1];
-        thinking = parts[2];
+        thinking = parts[1];
         ok = true;
     }
 }

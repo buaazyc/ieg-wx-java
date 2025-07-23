@@ -4,6 +4,9 @@ import com.tencent.wxcloudrun.dao.dataobject.IegUserDO;
 
 import java.util.List;
 
+/**
+ * @author zhangyichuan
+ */
 public interface IegUserMapper {
     List<IegUserDO> getIegUserList();
 

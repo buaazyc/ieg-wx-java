@@ -22,6 +22,9 @@ public enum CmdEnum {
     /** 打卡 */
     CLOCK("打卡", "打卡"),
 
+    /** 注册 */
+    REGISTER("注册", "注册"),
+
     /** 默认 */
     DEFAULT("", "发送邮件"),
     ;

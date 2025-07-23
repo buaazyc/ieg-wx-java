@@ -3,8 +3,10 @@ package com.tencent.wxcloudrun.manager;
 import com.tencent.wxcloudrun.dao.dataobject.IegUserDO;
 import com.tencent.wxcloudrun.dao.dataobject.ReadBookActDO;
 import com.tencent.wxcloudrun.dao.dataobject.ReadBookUserDO;
+import com.tencent.wxcloudrun.dao.dataobject.UserDO;
 import com.tencent.wxcloudrun.dao.mapper.ReadBookActMapper;
 import com.tencent.wxcloudrun.dao.mapper.ReadBookUserMapper;
+import com.tencent.wxcloudrun.dao.mapper.UserMapper;
 import com.tencent.wxcloudrun.domain.constant.Constants;
 import com.tencent.wxcloudrun.domain.entity.ClockEntity;
 import com.tencent.wxcloudrun.domain.entity.ReadBookActEntity;
@@ -28,6 +30,8 @@ public class ReadBookActManager {
     private final ReadBookActMapper readBookActMapper;
 
     private final ReadBookUserMapper readBookUserMapper;
+
+    private final UserManager userManager;
 
     private static ReadBookActDO CUR_READ_BOOK_ACT_DO = null;
 
@@ -67,18 +71,12 @@ public class ReadBookActManager {
             return "当前没有活动";
         }
 
+        UserDO userDO = userManager.getUserByWxOpenId(req.getFromUserName());
+
         // 校验
         for (ReadBookUserDO readBookUserDO : USER_LIST) {
-            // 同一个微信号，笔名需要相同
-            if (readBookUserDO.getWxId().equals(req.getFromUserName()) && !readBookUserDO.getUserName().equals(clockEntity.getUserName())) {
-                return "你的微信号已经绑定了笔名【"+ readBookUserDO.getUserName() + "】\n请使用之前的笔名打卡";
-            }
-            // 同一个笔名，不能被不同的微信号使用
-            if (!readBookUserDO.getWxId().equals(req.getFromUserName()) && readBookUserDO.getUserName().equals(clockEntity.getUserName())) {
-                return "笔名【"+ readBookUserDO.getUserName() + "】已经被其他书友使用，请更换笔名";
-            }
-            // 如果笔名相同，书名相同，且日期相同，则返回错误
-            if (readBookUserDO.getUserName().equals(clockEntity.getUserName()) &&
+            // 如果微信id相同，书名相同，且日期相同，则返回错误
+            if (readBookUserDO.getWxId().equals(userDO.getWxOpenId()) &&
                     readBookUserDO.getBookName().equals(CUR_READ_BOOK_ACT_DO.getBookName())
                     && readBookUserDO.getDate().equals(TimeUtil.getNowDate())) {
                 return "你今天已经打过卡了，请明天再来吧";
@@ -90,7 +88,7 @@ public class ReadBookActManager {
 
         // 更新db，并更新缓存
         readBookUserMapper.insertReadBookUser(new ReadBookUserDO(
-                clockEntity.getUserName(),
+                userDO.getPenName(),
                 req.getFromUserName(),
                 CUR_READ_BOOK_ACT_DO.getBookName(),
                 clockEntity.getThinking(),
@@ -103,7 +101,7 @@ public class ReadBookActManager {
         // 从缓存中获取一个和当前笔名不一样的感想
         ReadBookUserDO thinking = null;
         for (ReadBookUserDO readBookUserDO : USER_LIST) {
-            if (readBookUserDO.getUserName().equals(clockEntity.getUserName())) {
+            if (readBookUserDO.getWxId().equals(req.getFromUserName())) {
                 continue;
             }
             thinking = readBookUserDO;
@@ -111,12 +109,12 @@ public class ReadBookActManager {
         if (thinking == null) {
             return "当前没有用户对" + CUR_READ_BOOK_ACT_DO.getBookName() + "有想法";
         }
-        return clockEntity.getUserName() + "，你已成功打卡活动：" + CUR_READ_BOOK_ACT_DO.getBookName() + "\n" +
-                "累计打卡" + stat(clockEntity.getUserName()) + "天\n" +
+        return userDO.getPenName() + "，你已成功打卡活动：" + CUR_READ_BOOK_ACT_DO.getBookName() + "\n" +
+                "累计打卡" + stat(req.getFromUserName()) + "天\n" +
                 "\n" +
                 "其他书友：" + "\n" +
                 "笔名：" + thinking.getUserName() + "\n" +
-                "累计打卡：" + stat(thinking.getUserName()) + "天\n" +
+                "累计打卡：" + stat(thinking.getWxId()) + "天\n" +
                 "TA的想法：" + thinking.getThinking() + "\n";
     }
 
@@ -139,7 +137,7 @@ public class ReadBookActManager {
     public Integer stat(String userName) {
         Integer count = 0;
         for (ReadBookUserDO readBookUserDO : USER_LIST) {
-            if (readBookUserDO.getUserName().equals(userName)) {
+            if (readBookUserDO.getWxId().equals(userName)) {
                 count++;
             }
         }
