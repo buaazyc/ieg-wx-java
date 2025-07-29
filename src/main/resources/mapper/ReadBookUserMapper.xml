@@ -16,5 +16,6 @@
     </insert>
     <select id="getReadBookUser" resultMap="ReadBookUserMapper">
         SELECT * FROM t_read_book_user WHERE book_name = #{bookName}
+        AND STR_TO_DATE(date, '%Y%m%d') >= CURDATE() - INTERVAL 5 DAY;
     </select>
 </mapper>

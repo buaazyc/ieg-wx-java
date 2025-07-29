@@ -108,14 +108,15 @@ public class ReadBookActManager {
                 continue;
             }
             thinking = readBookUserDO;
+            break;
         }
         if (thinking == null) {
             return "当前没有用户对" + CUR_READ_BOOK_ACT_DO.getBookName() + "有想法";
         }
         return userDO.getPenName() + "，你已成功打卡活动：" + CUR_READ_BOOK_ACT_DO.getBookName() + "\n" +
-                "累计打卡" + stat(req.getFromUserName()) + "天\n" +
+                "累计打卡：" + stat(req.getFromUserName()) + "天\n" +
                 "\n" +
-                "其他书友：" + "\n" +
+                "其他书友：" + "，" +
                 "笔名：" + thinking.getUserName() + "\n" +
                 "累计打卡：" + stat(thinking.getWxId()) + "天\n" +
                 "TA的想法：" + thinking.getThinking() + "\n";

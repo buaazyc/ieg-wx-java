@@ -49,7 +49,7 @@ public class UserManager {
         return "注册成功："+ userDO.getPenName();
     }
 
-    public void insertUser(UserDO userDO) {
+    private void insertUser(UserDO userDO) {
         userMapper.insertUser(userDO);
         USER_PEN_NAME_MAP.put(userDO.getPenName(), userDO);
         USER_WX_OPEN_ID_MAP.put(userDO.getWxOpenId(), userDO);
