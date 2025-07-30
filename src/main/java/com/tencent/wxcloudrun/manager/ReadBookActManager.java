@@ -107,6 +107,12 @@ public class ReadBookActManager {
             if (readBookUserDO.getWxId().equals(req.getFromUserName())) {
                 continue;
             }
+            // 如果日期小于5天前，则不展示
+            if (TimeUtil.getDate(-5).compareTo(readBookUserDO.getDate()) > 0) {
+                log.info("readBookUserDO.getDate() = {}", readBookUserDO.getDate());
+                continue;
+            }
+            log.info("readBookUserDO = {}", readBookUserDO);
             thinking = readBookUserDO;
             break;
         }
