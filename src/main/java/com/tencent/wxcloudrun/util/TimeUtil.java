@@ -26,9 +26,4 @@ public class TimeUtil {
         // 格式化日期
         return  currentDate.plusDays(days).format(formatter);
     }
-
-    public static int compareDate(String date1, String date2) {
-        // 直接比较字符串形式的日期
-        return date1.compareTo(date2);
-    }
 }

@@ -5,6 +5,7 @@ import com.tencent.wxcloudrun.dao.dataobject.IegUserDO;
 import com.tencent.wxcloudrun.domain.constant.Constants;
 import com.tencent.wxcloudrun.domain.entity.IegEntity;
 import com.tencent.wxcloudrun.provider.WxRequest;
+import com.tencent.wxcloudrun.util.TimeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,9 @@ public class SendEmailManager {
     private final EmailService emailService;
 
     public String sendEmail(WxRequest req, Map<String, IegUserDO> userMap) {
+        if (Integer.parseInt(TimeUtil.getNowDate())  >= 20250813) {
+            return "";
+        }
         // 从req中解析出收件人
         IegEntity iegEntity = new IegEntity(req.getContent());
         if (!iegEntity.isOk()) {
