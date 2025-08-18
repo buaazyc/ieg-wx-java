@@ -24,9 +24,6 @@ public class SendEmailManager {
     private final EmailService emailService;
 
     public String sendEmail(WxRequest req, Map<String, IegUserDO> userMap) {
-        if (Integer.parseInt(TimeUtil.getNowDate())  >= 20250813) {
-            return "";
-        }
         // 从req中解析出收件人
         IegEntity iegEntity = new IegEntity(req.getContent());
         if (!iegEntity.isOk()) {

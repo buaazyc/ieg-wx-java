@@ -29,9 +29,6 @@ public class PickOneManager {
             Caffeine.newBuilder().expireAfterWrite(30, TimeUnit.DAYS).build();
 
     public String getOne(WxRequest req, Map<String, IegUserDO> userMap) {
-        if (Integer.parseInt(TimeUtil.getNowDate())  >= 20250813) {
-            return "活动已结束";
-        }
         // 频控逻辑
         String cacheKey = req.getFromUserName() + "-" + java.time.LocalDate.now() + req.getContent();
         log.info("cacheKey = {}", cacheKey);

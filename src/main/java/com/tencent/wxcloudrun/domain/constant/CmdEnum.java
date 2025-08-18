@@ -1,7 +1,6 @@
 package com.tencent.wxcloudrun.domain.constant;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 场景枚举值
@@ -25,8 +24,11 @@ public enum CmdEnum {
     /** 注册 */
     REGISTER("注册", "注册"),
 
+    /** 留言 */
+    MESSAGE("留言", "发送邮件"),
+
     /** 默认 */
-    DEFAULT("", "发送邮件"),
+    DEFAULT("默认", "默认")
     ;
 
     private final String cmd;
