@@ -8,7 +8,7 @@ import lombok.Data;
  * @date 2025/5/22
  */
 @Data
-public class IegEntity implements Serializable {
+public class SevenMessageEntity implements Serializable {
 
   private String receiver;
 
@@ -23,7 +23,7 @@ public class IegEntity implements Serializable {
    *
    * @param input 微信输入的消息
    */
-  public IegEntity(String input) {
+  public SevenMessageEntity(String input) {
     if (input == null || input.isEmpty()) {
       ok = false;
       return;

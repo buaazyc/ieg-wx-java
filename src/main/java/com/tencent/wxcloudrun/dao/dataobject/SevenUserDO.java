@@ -1,16 +1,15 @@
 package com.tencent.wxcloudrun.dao.dataobject;
 
 import com.tencent.wxcloudrun.domain.constant.Constants;
-import lombok.Data;
-
 import java.io.Serializable;
+import lombok.Data;
 
 /**
  * @author zhangyichuan
  * @date 2025/6/5
  */
 @Data
-public class IegUserDO implements Serializable {
+public class SevenUserDO implements Serializable {
 
   private String gender;
 
@@ -26,7 +25,7 @@ public class IegUserDO implements Serializable {
 
   private String docName;
 
-  public IegUserDO(String userName, String gender, String email, String bookList, String queryList) {
+  public SevenUserDO(String userName, String gender, String email, String bookList, String queryList) {
     this.userName = userName;
     this.gender = gender;
     this.email = email;

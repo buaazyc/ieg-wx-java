@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.tencent.wxcloudrun.dao.mapper.IegUserMapper">
+<mapper namespace="com.tencent.wxcloudrun.dao.mapper.SevenUserMapper">
 
     <!-- 定义结果集映射 -->
-    <resultMap id="IegUserResultMap" type="com.tencent.wxcloudrun.dao.dataobject.IegUserDO">
+    <resultMap id="IegUserResultMap" type="com.tencent.wxcloudrun.dao.dataobject.SevenUserDO">
         <result property="gender" column="gender"/>
         <result property="userName" column="user_name"/>
         <result property="email" column="email"/>
@@ -13,7 +13,7 @@
         <result property="docName" column="doc_name"/>
     </resultMap>
 
-    <insert id="saveIegUser">
+    <insert id="saveSevenUser">
         INSERT INTO t_ieg_user (gender, user_name, email, book_list, query_list)
         VALUES (#{gender}, #{userName}, #{email}, #{bookList}, #{queryList})
         ON DUPLICATE KEY UPDATE
@@ -24,7 +24,7 @@
     </insert>
 
     <!-- 查询用户列表 -->
-    <select id="getIegUserList" resultMap="IegUserResultMap">
+    <select id="getSevenUserList" resultMap="IegUserResultMap">
         SELECT * FROM t_ieg_user
     </select>
 </mapper>

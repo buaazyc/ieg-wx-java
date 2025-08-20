@@ -28,7 +28,7 @@ public enum CmdEnum {
     MESSAGE("留言", "发送邮件"),
 
     /** 默认 */
-    DEFAULT("默认", "默认")
+    DEFAULT("", "默认")
     ;
 
     private final String cmd;

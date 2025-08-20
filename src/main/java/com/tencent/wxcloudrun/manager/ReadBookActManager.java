@@ -1,23 +1,19 @@
 package com.tencent.wxcloudrun.manager;
 
-import com.tencent.wxcloudrun.dao.dataobject.IegUserDO;
 import com.tencent.wxcloudrun.dao.dataobject.ReadBookActDO;
-import com.tencent.wxcloudrun.dao.dataobject.ReadBookUserDO;
+import com.tencent.wxcloudrun.dao.dataobject.ReadBookUserTkDO;
 import com.tencent.wxcloudrun.dao.dataobject.UserDO;
 import com.tencent.wxcloudrun.dao.mapper.ReadBookActMapper;
-import com.tencent.wxcloudrun.dao.mapper.ReadBookUserMapper;
-import com.tencent.wxcloudrun.dao.mapper.UserMapper;
+import com.tencent.wxcloudrun.dao.mapper.ReadBookUserTkMapper;
 import com.tencent.wxcloudrun.domain.constant.Constants;
-import com.tencent.wxcloudrun.domain.entity.ClockEntity;
+import com.tencent.wxcloudrun.domain.entity.ClockMsgEntity;
 import com.tencent.wxcloudrun.domain.entity.ReadBookActEntity;
 import com.tencent.wxcloudrun.provider.WxRequest;
 import com.tencent.wxcloudrun.util.TimeUtil;
+import java.util.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-import java.util.*;
 
 /**
  * @author zhangyichuan
@@ -29,13 +25,13 @@ import java.util.*;
 public class ReadBookActManager {
     private final ReadBookActMapper readBookActMapper;
 
-    private final ReadBookUserMapper readBookUserMapper;
+    private final ReadBookUserTkMapper readBookUserTkMapper;
 
     private final UserManager userManager;
 
     private static ReadBookActDO CUR_READ_BOOK_ACT_DO = null;
 
-    private static final List<ReadBookUserDO> USER_LIST = new ArrayList<>();
+    private static final List<ReadBookUserTkDO> USER_LIST = new ArrayList<>();
 
     public String saveReadBookAct(WxRequest req) {
         // 必须是管理员
@@ -61,8 +57,8 @@ public class ReadBookActManager {
 
     public String clockIn(WxRequest req) {
         // 解析出请求体
-        ClockEntity clockEntity = new ClockEntity(req.getContent());
-        if (!clockEntity.isOk()) {
+        ClockMsgEntity clockMsgEntity = new ClockMsgEntity(req.getContent());
+        if (!clockMsgEntity.isOk()) {
             return "格式错误" + Constants.clockInHelper();
         }
 
@@ -77,24 +73,24 @@ public class ReadBookActManager {
         }
 
         // 校验
-        for (ReadBookUserDO readBookUserDO : USER_LIST) {
+        for (ReadBookUserTkDO readBookUserTkDO : USER_LIST) {
             // 如果微信id相同，书名相同，且日期相同，则返回错误
-            if (readBookUserDO.getWxId().equals(userDO.getWxOpenId()) &&
-                    readBookUserDO.getBookName().equals(CUR_READ_BOOK_ACT_DO.getBookName())
-                    && readBookUserDO.getDate().equals(TimeUtil.getNowDate())) {
+            if (readBookUserTkDO.getWxId().equals(userDO.getWxOpenId()) &&
+                    readBookUserTkDO.getBookName().equals(CUR_READ_BOOK_ACT_DO.getBookName())
+                    && readBookUserTkDO.getDate().equals(TimeUtil.getNowDate())) {
                 return "你今天已经打过卡了，请明天再来吧";
             }
         }
-        if (clockEntity.getThinking().length() < 15) {
+        if (clockMsgEntity.getThinking().length() < 15) {
             return "你的想法太短了，请写点长一点";
         }
 
         // 更新db，并更新缓存
-        readBookUserMapper.insertReadBookUser(new ReadBookUserDO(
+        readBookUserTkMapper.insertReadBookUserTk(new ReadBookUserTkDO(
                 userDO.getPenName(),
                 req.getFromUserName(),
                 CUR_READ_BOOK_ACT_DO.getBookName(),
-                clockEntity.getThinking(),
+                clockMsgEntity.getThinking(),
                 TimeUtil.getNowDate()
         ));
         update();
@@ -102,30 +98,30 @@ public class ReadBookActManager {
         // 打乱USER_LIST的顺序
         Collections.shuffle(USER_LIST);
         // 从缓存中获取一个和当前笔名不一样的感想
-        ReadBookUserDO thinking = null;
-        for (ReadBookUserDO readBookUserDO : USER_LIST) {
-            if (readBookUserDO.getWxId().equals(req.getFromUserName())) {
+        ReadBookUserTkDO otherUserThinking = null;
+        for (ReadBookUserTkDO readBookUserTkDO : USER_LIST) {
+            if (readBookUserTkDO.getWxId().equals(req.getFromUserName())) {
                 continue;
             }
             // 如果日期小于5天前，则不展示
-            if (TimeUtil.getDate(-5).compareTo(readBookUserDO.getDate()) > 0) {
-                log.info("readBookUserDO.getDate() = {}", readBookUserDO.getDate());
+            if (TimeUtil.getDate(-5).compareTo(readBookUserTkDO.getDate()) > 0) {
+                log.info("readBookUserDO.getDate() = {}", readBookUserTkDO.getDate());
                 continue;
             }
-            log.info("readBookUserDO = {}", readBookUserDO);
-            thinking = readBookUserDO;
+            log.info("readBookUserDO = {}", readBookUserTkDO);
+            otherUserThinking = readBookUserTkDO;
             break;
         }
-        if (thinking == null) {
+        if (otherUserThinking == null) {
             return "当前没有用户对" + CUR_READ_BOOK_ACT_DO.getBookName() + "有想法";
         }
         return userDO.getPenName() + "，你已成功完成今日打卡！\n"+
                 "共读书籍：" + CUR_READ_BOOK_ACT_DO.getBookName() + "\n" +
                 "累计打卡：" + stat(req.getFromUserName()) + "天\n" +
                 "\n" +
-                "共读书友：" + thinking.getUserName() + "\n" +
-                "累计打卡：" + stat(thinking.getWxId()) + "天\n" +
-                "TA的想法：" + thinking.getThinking() + "\n";
+                "共读书友：" + otherUserThinking.getUserName() + "\n" +
+                "累计打卡：" + stat(otherUserThinking.getWxId()) + "天\n" +
+                "TA的想法：" + otherUserThinking.getThinking() + "\n";
     }
 
     public void update() {
@@ -137,7 +133,7 @@ public class ReadBookActManager {
         }
         log.info("CUR_READ_BOOK_ACT_DO = {}", CUR_READ_BOOK_ACT_DO);
         // 查询当前活动的用户想法
-        List<ReadBookUserDO> readBookUserList = readBookUserMapper.getReadBookUser(CUR_READ_BOOK_ACT_DO.getBookName());
+        List<ReadBookUserTkDO> readBookUserList = readBookUserTkMapper.getReadBookUserTk(CUR_READ_BOOK_ACT_DO.getBookName());
         // 更新当前活动的用户想法
         USER_LIST.clear();
         USER_LIST.addAll(readBookUserList);
@@ -146,8 +142,8 @@ public class ReadBookActManager {
 
     public Integer stat(String userName) {
         Integer count = 0;
-        for (ReadBookUserDO readBookUserDO : USER_LIST) {
-            if (readBookUserDO.getWxId().equals(userName)) {
+        for (ReadBookUserTkDO readBookUserTkDO : USER_LIST) {
+            if (readBookUserTkDO.getWxId().equals(userName)) {
                 count++;
             }
         }

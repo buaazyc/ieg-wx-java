@@ -2,18 +2,16 @@ package com.tencent.wxcloudrun.manager;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.tencent.wxcloudrun.dao.dataobject.IegUserDO;
+import com.tencent.wxcloudrun.dao.dataobject.SevenUserDO;
 import com.tencent.wxcloudrun.provider.WxRequest;
-import com.tencent.wxcloudrun.util.TimeUtil;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 /**
  * @author zhangyichuan
@@ -22,13 +20,13 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class PickOneManager {
+public class SevenPickManager {
 
     /** 缓存1month */
     private final Cache<String, String> cache =
             Caffeine.newBuilder().expireAfterWrite(30, TimeUnit.DAYS).build();
 
-    public String getOne(WxRequest req, Map<String, IegUserDO> userMap) {
+    public String getOne(WxRequest req, Map<String, SevenUserDO> userMap) {
         // 频控逻辑
         String cacheKey = req.getFromUserName() + "-" + java.time.LocalDate.now() + req.getContent();
         log.info("cacheKey = {}", cacheKey);
@@ -37,18 +35,18 @@ public class PickOneManager {
         }
         cache.put(cacheKey, "true");
 
-        IegUserDO target = null;
-        List<IegUserDO> userList = new ArrayList<>(userMap.values());
+        SevenUserDO target = null;
+        List<SevenUserDO> userList = new ArrayList<>(userMap.values());
         Collections.shuffle(userList);
-        for(IegUserDO iegUserDO : userList) {
-            if (iegUserDO.getEmail().isEmpty()) {
+        for(SevenUserDO sevenUserDO : userList) {
+            if (sevenUserDO.getEmail().isEmpty()) {
                 continue;
             }
-            if (iegUserDO.getBookList().isEmpty() && iegUserDO.getQueryList().isEmpty()) {
+            if (sevenUserDO.getBookList().isEmpty() && sevenUserDO.getQueryList().isEmpty()) {
                 continue;
             }
-            if (isEqual(iegUserDO, req.getContent())) {
-                target = iegUserDO;
+            if (isEqual(sevenUserDO, req.getContent())) {
+                target = sevenUserDO;
                 log.info("target = {}", target);
                 break;
             }
@@ -59,8 +57,8 @@ public class PickOneManager {
         return target.printBox();
     }
 
-    private boolean isEqual(IegUserDO iegUserDO, String content) {
-        return "独立男生".equals(iegUserDO.getGender()) && "七夕男".equals(content)
-                || "独立女生".equals(iegUserDO.getGender()) && "七夕女".equals(content);
+    private boolean isEqual(SevenUserDO sevenUserDO, String content) {
+        return "独立男生".equals(sevenUserDO.getGender()) && "七夕男".equals(content)
+                || "独立女生".equals(sevenUserDO.getGender()) && "七夕女".equals(content);
     }
 }

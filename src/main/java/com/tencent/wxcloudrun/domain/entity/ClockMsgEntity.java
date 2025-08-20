@@ -8,12 +8,12 @@ import lombok.Data;
  * @date 2025/7/21
  */
 @Data
-public class ClockEntity {
+public class ClockMsgEntity {
     private String thinking;
 
     private boolean ok;
 
-    public ClockEntity(String content) {
+    public ClockMsgEntity(String content) {
         if (content == null || content.isEmpty()) {
             ok = false;
             return;

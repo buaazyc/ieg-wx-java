@@ -1,9 +1,8 @@
 package com.tencent.wxcloudrun.domain.entity;
 
 import com.tencent.wxcloudrun.domain.constant.CmdEnum;
-import lombok.Data;
-
 import java.io.Serializable;
+import lombok.Data;
 
 /**
  * @author zhangyichuan

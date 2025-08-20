@@ -1,15 +1,14 @@
 package com.tencent.wxcloudrun.dao.dataobject;
 
-import lombok.Data;
-
 import java.io.Serializable;
+import lombok.Data;
 
 /**
  * @author zhangyichuan
  * @date 2025/7/21
  */
 @Data
-public class ReadBookUserDO implements Serializable {
+public class ReadBookUserTkDO implements Serializable {
     private Integer id;
 
     private String userName;
@@ -22,7 +21,7 @@ public class ReadBookUserDO implements Serializable {
 
     private String date;
 
-    public ReadBookUserDO(String userName, String wxId, String bookName, String thinking, String date) {
+    public ReadBookUserTkDO(String userName, String wxId, String bookName, String thinking, String date) {
         this.userName = userName;
         this.wxId = wxId;
         this.bookName = bookName;

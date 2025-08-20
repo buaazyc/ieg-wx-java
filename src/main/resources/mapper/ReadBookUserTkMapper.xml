@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.tencent.wxcloudrun.dao.mapper.ReadBookUserMapper">
+<mapper namespace="com.tencent.wxcloudrun.dao.mapper.ReadBookUserTkMapper">
 
-    <resultMap id="ReadBookUserMapper" type="com.tencent.wxcloudrun.dao.dataobject.ReadBookUserDO">
+    <resultMap id="ReadBookUserMapper" type="com.tencent.wxcloudrun.dao.dataobject.ReadBookUserTkDO">
         <id property="id" column="id"/>
         <result property="userName" column="user_name"/>
         <result property="wxId" column="wx_id"/>
@@ -11,10 +11,10 @@
         <result property="date" column="date"/>
     </resultMap>
 
-    <insert id="insertReadBookUser">
+    <insert id="insertReadBookUserTk">
         INSERT INTO t_read_book_user (user_name, wx_id, book_name, thinking, date) VALUES (#{userName}, #{wxId}, #{bookName}, #{thinking}, #{date})
     </insert>
-    <select id="getReadBookUser" resultMap="ReadBookUserMapper">
+    <select id="getReadBookUserTk" resultMap="ReadBookUserMapper">
         SELECT * FROM t_read_book_user WHERE book_name = #{bookName}
     </select>
 </mapper>

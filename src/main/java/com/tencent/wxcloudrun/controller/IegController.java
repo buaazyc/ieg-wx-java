@@ -1,11 +1,11 @@
 package com.tencent.wxcloudrun.controller;
 
-import com.tencent.wxcloudrun.dao.dataobject.IegUserDO;
-import com.tencent.wxcloudrun.dao.mapper.IegUserMapper;
+import com.tencent.wxcloudrun.dao.dataobject.SevenUserDO;
+import com.tencent.wxcloudrun.dao.mapper.SevenUserMapper;
 import com.tencent.wxcloudrun.domain.constant.CmdEnum;
 import com.tencent.wxcloudrun.domain.constant.Constants;
 import com.tencent.wxcloudrun.domain.entity.SaveIegEntity;
-import com.tencent.wxcloudrun.manager.PickOneManager;
+import com.tencent.wxcloudrun.manager.SevenPickManager;
 import com.tencent.wxcloudrun.manager.ReadBookActManager;
 import com.tencent.wxcloudrun.manager.SendEmailManager;
 import com.tencent.wxcloudrun.manager.UserManager;
@@ -33,18 +33,18 @@ import org.springframework.web.bind.annotation.*;
 @EnableScheduling
 public class IegController {
 
-  private final IegUserMapper iegUserMapper;
+  private final SevenUserMapper sevenUserMapper;
 
   private final SendEmailManager sendEmailManager;
 
-  private final PickOneManager pickOneManager;
+  private final SevenPickManager sevenPickManager;
 
   private final ReadBookActManager readBookActManager;
 
   private final UserManager userManager;
 
   /** 用户到邮箱的映射 */
-  private static final Map<String, IegUserDO> USER_EMAIL_MAP =
+  private static final Map<String, SevenUserDO> SEVEN_USER_EMAIL_MAP =
       new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
   /** 初始化 */
@@ -81,12 +81,13 @@ public class IegController {
 
   @Scheduled(cron = "0 */10 * * * ?")
   private void update() {
-    List<IegUserDO> iegUserList = iegUserMapper.getIegUserList();
-    iegUserList.forEach(
-        iegUserDO -> {
-          USER_EMAIL_MAP.put(iegUserDO.getUserName(), iegUserDO);
-        });
-    log.info("USER_EMAIL_MAP = {}", USER_EMAIL_MAP);
+    List<SevenUserDO> sevenUserList = sevenUserMapper.getSevenUserList();
+    // 活动结束，定时任务关闭
+//    sevenUserList.forEach(
+//            sevenUserDO -> {
+//          SEVEN_USER_EMAIL_MAP.put(sevenUserDO.getUserName(), sevenUserDO);
+//        });
+//    log.info("SEVEN_USER_EMAIL_MAP = {}", SEVEN_USER_EMAIL_MAP);
     readBookActManager.update();
     userManager.update();
   }
@@ -108,11 +109,12 @@ public class IegController {
     log.info("cmdEnum = {}", cmdEnum);
     switch (cmdEnum) {
       case PICK_ONE:
-        //          res = "活动已经结束";
-        res = pickOneManager.getOne(req, USER_EMAIL_MAP);
+          res = "";
+//        res = sevenPickManager.getOne(req, SEVEN_USER_EMAIL_MAP);
         break;
       case SAVE_USER_INFO:
-        res = saveIegUser(req);
+          res = "";
+//        res = saveIegUser(req);
         break;
       case SAVE_ACT:
         res = readBookActManager.saveReadBookAct(req);
@@ -149,16 +151,16 @@ public class IegController {
       return "格式错误" + Constants.saveIegUserHelper();
     }
 
-    IegUserDO iegUserDO =
-        new IegUserDO(
+    SevenUserDO sevenUserDO =
+        new SevenUserDO(
             saveIegEntity.getUserName(),
             saveIegEntity.getGender(),
             saveIegEntity.getEmail(),
             saveIegEntity.getBookList(),
             saveIegEntity.getQueryList());
-    iegUserMapper.saveIegUser(iegUserDO);
-    USER_EMAIL_MAP.put(iegUserDO.getUserName(), iegUserDO);
-    return "保存用户信息成功\n" + iegUserDO.print();
+    sevenUserMapper.saveSevenUser(sevenUserDO);
+    SEVEN_USER_EMAIL_MAP.put(sevenUserDO.getUserName(), sevenUserDO);
+    return "保存用户信息成功\n" + sevenUserDO.print();
   }
 
   /** 计算 SHA-1 哈希值 */
